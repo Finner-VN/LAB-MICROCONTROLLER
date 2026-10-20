@@ -1,9 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Gộp bài Ex10 (LED Ma Trận) & Ex8 (Đồng hồ LED 7 đoạn)
-  ******************************************************************************
+ * EX10
+ */
   */
 /* USER CODE END Header */
 #include "main.h"
@@ -11,12 +9,12 @@
 /* USER CODE BEGIN PV */
 TIM_HandleTypeDef htim2;
 
-// --- SOFTWARE TIMER TEMPLATE (4 TIMERS CHO 4 TÁC VỤ SONG SONG) ---
+// SOFTWARE TIMER
 #define MAX_TIMERS 4
 int timer_counter[MAX_TIMERS] = {0};
 int timer_flag[MAX_TIMERS] = {0};
 
-// ================= 1. CÁC BIẾN CỦA MA TRẬN LED =================
+// 1. CÁC BIẾN CỦA MA TRẬN LED
 const int MAX_LED_MATRIX = 8;
 int index_led_matrix = 0;
 // Mảng 8 byte mã hóa chữ "A"
@@ -24,7 +22,7 @@ uint8_t matrix_A[8] = {
     0x03, 0xF5, 0xF6, 0xF6, 0xF6, 0xF6, 0xF5, 0x03
 };
 
-// ================= 2. CÁC BIẾN CỦA ĐỒNG HỒ SỐ =================
+//2. CÁC BIẾN CỦA ĐỒNG HỒ SỐ 
 const int MAX_LED = 4;
 int index_led = 0;
 int led_buffer[4] = {2, 0, 2, 6}; // Mặc định 20:26
@@ -68,7 +66,7 @@ void timerRun(void) {
     }
 }
 
-// ================= HÀM XỬ LÝ MA TRẬN LED =================
+// HÀM XỬ LÝ MA TRẬN LED 
 void shiftLeft(void) {
     uint8_t temp = matrix_A[0];
     for (int i = 0; i < 7; i++) {
@@ -105,7 +103,7 @@ void updateLEDMatrix(int index) {
     }
 }
 
-// ================= HÀM XỬ LÝ ĐỒNG HỒ 7-ĐOẠN =================
+// HÀM XỬ LÝ ĐỒNG HỒ 7-ĐOẠN 
 void updateClockBuffer(void) {
     led_buffer[0] = hour / 10;
     led_buffer[1] = hour % 10;
@@ -179,27 +177,27 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      // --- TASK 1: QUÉT HIỂN THỊ MA TRẬN LED ---
+      // TASK 1: QUÉT HIỂN THỊ MA TRẬN LED
       if (timer_flag[0] == 1) {
           setTimer(0, 3);
           index_led_matrix = (index_led_matrix + 1) % MAX_LED_MATRIX;
           updateLEDMatrix(index_led_matrix);
       }
 
-      // --- TASK 2: DỊCH CHUYỂN CHỮ "A" ---
+      // TASK 2: DỊCH CHUYỂN CHỮ "A" 
       if (timer_flag[1] == 1) {
           setTimer(1, 120);
           shiftLeft();
       }
 
-      // --- TASK 3: QUÉT HIỂN THỊ ĐỒNG HỒ 7 ĐOẠN ---
+      // TASK 3: QUÉT HIỂN THỊ ĐỒNG HỒ 7 ĐOẠN 
       if (timer_flag[2] == 1) {
           setTimer(2, 15);
           update7SEG(index_led);
           index_led = (index_led + 1) % MAX_LED;
       }
 
-      // --- TASK 4: ĐẾM GIỜ VÀ CHỚP LED STATUS ---
+      // TASK 4: ĐẾM GIỜ VÀ CHỚP LED STATUS
       if (timer_flag[3] == 1) {
           setTimer(3, 100);
 
